@@ -10,6 +10,9 @@ ExecStop=/bin/kill -9 $MAINPID
 PIDFile=/usr/local/tomcat/bin/catalina.pid
 WatchdogSec=30
 NotifyAccess=all
+Restart=always
+RestartSec=5s
+TimeoutStartSec=2min
  
 [Install]
 WantedBy=multi-user.target

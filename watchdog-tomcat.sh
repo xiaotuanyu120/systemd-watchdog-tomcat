@@ -1,9 +1,11 @@
 #!/bin/bash
 
 CURL_TMP_RESULT=/tmp/curl_result.txt
+
 WATCHED_IP=127.0.0.1
 WATCHED_PORT=8080
 WATCHED_NET=$WATCHED_IP:$WATCHED_PORT
+CATALINA_BASE=/usr/local/tomcat
 
 trap "rm -f ${CURL_TMP_RESULT}" EXIT
 
@@ -26,19 +28,12 @@ getPidByPort() {
 watchdogTomcat() {
     while : ; do
         getPidByPort $WATCHED_PORT
-        if [[ $pid != "null" ]] ; then
-            echo "Process startup"
-            break
-        else
-            echo "waitting Process start"
-        fi
-        sleep 1
+        [[ $pid != "null" ]] && systemd-notify --ready ; sleep 2 ; break
     done
 
     while : ; do
         FAIL=0
         interval=$(($WATCHDOG_USEC / $((2 * 1000000))))
-        echo "fail:" $FAIL " num:" $num " interval:" $interval # debug
         curl -s -o $CURL_TMP_RESULT $WATCHED_NET || FAIL=1
 
         if [[ $FAIL -eq 0 ]] ; then
@@ -53,7 +48,6 @@ watchdogTomcat() {
 }
 
 
-systemd-notify --ready
 
 watchdogTomcat &
-eval exec /usr/local/tomcat/bin/catalina.sh start
+eval exec ${CATALINA_BASE}/bin/catalina.sh start
