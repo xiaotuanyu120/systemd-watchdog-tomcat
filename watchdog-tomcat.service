@@ -3,11 +3,11 @@ Description=watchdog test
  
 [Service]
 Type=forking
-Environment=JAVA_HOME=/usr/java/jdk1.7.0_79
-Environment=CATALINA_PID=/usr/local/tomcat/bin/catalina.pid
-ExecStart=/usr/local/tomcat/bin/watchdog-tomcat.sh
+Environment=JAVA_HOME=/usr/local/jdk
+#Environment=CATALINA_PID=/usr/local/tomcat/bin/catalina.pid
+#PIDFile=/usr/local/tomcat/bin/catalina.pid
+ExecStart=/usr/local/bin/watchdog-tomcat
 ExecStop=/bin/kill -9 $MAINPID
-PIDFile=/usr/local/tomcat/bin/catalina.pid
 WatchdogSec=30
 NotifyAccess=all
 Restart=always
