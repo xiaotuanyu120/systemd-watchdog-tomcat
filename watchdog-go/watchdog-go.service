@@ -1,0 +1,18 @@
+[Unit]
+Description=watchdog - golang
+ 
+[Service]
+Type=simple
+User=tomcat
+Group=tomcat
+Environment=JAVA_HOME=/usr/java/jdk1.7.0_79
+ExecStart=/usr/local/bin/watchdog-go -app=/usr/local/tomcat/bin/startup.sh -port=8080
+ExecStop=/bin/kill -9 $MAINPID
+WatchdogSec=30
+NotifyAccess=all
+Restart=always
+RestartSec=5s
+TimeoutStartSec=2min
+ 
+[Install]
+WantedBy=multi-user.target
