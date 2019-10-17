@@ -19,19 +19,22 @@ import (
 )
 
 func runWatchedApp(application string) (pid int, err error) {
-	/*Execute Application*/
+	/*Execute Application
+	1. run app and set group pid for the forked child process
+	2. wait app start up*/
 	cmd := exec.Command(application)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	err = cmd.Run()
 	if err != nil {
 		fmt.Println(err)
 		pid = 0
-		return
+		return pid, err
 	}
 	pgid := cmd.Process.Pid
 	cmd.Wait()
 
-	/*Get pid of JVM*/
+	/*Get pid of JVM
+	get pid of child process by filter ps result using group pid*/
 	grep := exec.Command("grep", strconv.Itoa(pgid))
 	ps := exec.Command("ps", "axo", "pid,pgid,comm")
 
@@ -58,17 +61,17 @@ func runWatchedApp(application string) (pid int, err error) {
 		defer pw.Close()
 		ps.Wait()
 	}()
+	defer pr.Close()
 	grep.Wait()
 
 	res := strings.TrimSpace(out.String())
 	pid, _ = strconv.Atoi(strings.Split(res, " ")[0])
-	return
+	return pid, nil
 }
 
 func healthCheck(check_url string) (err error) {
 	resp, err := http.Get(check_url)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer resp.Body.Close()
@@ -106,15 +109,19 @@ func main() {
 		os.Exit(2)
 	}
 
-	// WATCHDOG INITIAL
+	/* WATCHDOG INITIAL
+	start watchdog when
+	1. first health check success*/
 	for {
 		err := healthCheck(check_url)
 		if err == nil {
 			state := fmt.Sprintf("MAINPID=%d\n%s", pid, daemon.SdNotifyReady)
 			daemon.SdNotify(false, state)
-			fmt.Println("watchdog and program is ready")
+			fmt.Println("watchdog initializing: program is ok, watchdog is ready")
 
 			break
+		} else {
+			fmt.Println("watchdog initializing: program is not ok, watchdog is waiting")
 		}
 		time.Sleep(1000 * time.Millisecond)
 	}
@@ -135,11 +142,9 @@ func main() {
 			}
 
 			if wd_fail == true {
-				fmt.Println("watchdog check success")
 				daemon.SdNotify(false, daemon.SdNotifyWatchdog)
 				time.Sleep(time.Duration(wd_interval) * 1000 * time.Millisecond)
 			} else {
-				fmt.Println("watchdog check failed")
 				time.Sleep(1000 * time.Millisecond)
 			}
 		}
