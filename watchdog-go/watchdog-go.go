@@ -138,14 +138,14 @@ func main() {
                 wd_interval := watchdog_usec / (2 * 1000000)
 
                 for {
-                        wd_fail := true
+                        wd_fail := false
 
                         err := healthCheck(check_url)
                         if err != nil {
-                                wd_fail = false
+                                wd_fail = true
                         }
 
-                        if wd_fail == true {
+                        if wd_fail == false {
                                 daemon.SdNotify(false, daemon.SdNotifyWatchdog)
                                 time.Sleep(time.Duration(wd_interval) * 1000 * time.Millisecond)
                         } else {
