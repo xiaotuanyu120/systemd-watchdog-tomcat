@@ -4,7 +4,7 @@ Description=watchdog test
 [Service]
 Type=forking
 Environment=JAVA_HOME=/usr/local/jdk
-ExecStart=/usr/local/bin/watchdog-tomcat
+ExecStart=/usr/local/bin/watchdog-bash
 ExecStop=/bin/kill -9 $MAINPID
 WatchdogSec=30
 NotifyAccess=all
