@@ -71,7 +71,10 @@ func runWatchedApp(application string) (pid int, err error) {
 }
 
 func healthCheck(check_url string) (bool, error) {
-    resp, err := http.Get(check_url)
+    var netClient = &http.Client{
+        Timeout: time.Second * 5,
+    }
+    resp, err := netClient.Get(check_url)
     if err != nil {
         return false, err
     }
