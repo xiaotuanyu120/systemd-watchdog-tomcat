@@ -156,6 +156,9 @@ func main() {
 
             // check and change the watchdog failed state
             check_start := time.Now()
+            /* add your alert logic here, send alert to email or IM
+            the reason put alert logic here is we should time alert process and caculate the right
+            sleep time*/
             check_success, err := healthCheck(check_url, *healthcheck_timeout)
             if check_success == true {
                 continue_fail = 0
@@ -171,7 +174,6 @@ func main() {
 
             if wd_fail == false {
                 if check_success == false {
-                    // add your alert logic here
                     fmt.Printf("CHECK STATUS: failed; ERROR: %s\n", err.Error())
                 }
                 wd_interval = int(wd_usec - check_time_spent + 0.5)
