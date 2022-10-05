@@ -6,8 +6,8 @@ Normally systemd will monitor service in process level. **systemd-watchdog-tomca
 > - [sd_notify #Description](https://www.freedesktop.org/software/systemd/man/sd_notify.html#Description)
 
 > 两篇中文博客文档
-> - [systemd-watchdog之旅1 - 脚本篇](https://linux.xiao5tech.com/linux/advance/systemd_2.1.0_watchdog_for_tomcat.html)
-> - [systemd-watchdog之旅2 - golang篇](https://linux.xiao5tech.com/linux/advance/systemd_2.1.1_watchdog_for_tomcat_error_of_nonroot_user.html)
+> - [systemd-watchdog之旅1 - 脚本篇](https://blog.xiaotuanyu.com/linux/advance/systemd_2.1.0_watchdog_for_tomcat.html)
+> - [systemd-watchdog之旅2 - golang篇](https://blog.xiaotuanyu.com/linux/advance/systemd_2.1.1_watchdog_for_tomcat_error_of_nonroot_user.html)
 
 ### How to use systemd-watchdog-tomcat
 First, clone systemd-watchdog-tomcat and build it
